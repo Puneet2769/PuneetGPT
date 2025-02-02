@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Collector CAPTCHA</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #ff3cac, #784ba0, #2b86c5); /* Matches your existing UI */
+            color: white;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .game-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: 0px 8px 20px rgba(255, 255, 255, 0.2);
+            margin-top: 50px;
+        }
+
+        .coins {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .coin {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .coin:hover {
+            transform: scale(1.2);
+            box-shadow: 0px 6px 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .status {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        button {
+            background: #ff3cac;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.3);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #ff48b8;
+            transform: scale(1.1);
+            box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Smooth message box */
+        .message-box {
+            display: none;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            text-align: center;
+            box-shadow: 0px 8px 20px rgba(255, 255, 255, 0.4);
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+
+        .message-box.active {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Confetti animation */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: gold;
+            top: 0;
+            left: 50%;
+            opacity: 0.8;
+            animation: confetti-fall 2s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(500px) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Footer Placeholder in your page -->
+    <div id="footer-placeholder"></div>
+    
+    <script>
+      // Dynamically load footer.html into the footer-placeholder div
+      fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-placeholder').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading footer:', error));
+    </script>
+
+    <div id="navbar-placeholder"></div>
+
+    <script>
+        fetch("nav.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("navbar-placeholder").innerHTML = data;
+                // Attach navigation listeners after the nav has loaded.
+                attachNavLinkListeners();
+            });
+    </script>
+    <br>
+    <br>
+    <br>
+
+    <h1 style="font-size: 60px;">Welcome to <b>PUNEETGPT!!</b></h1>
+
+    <h2 style="font-size: 30px;">🎉 Coin Collector CAPTCHA 🎉</h2>
+
+    <div class="game-container">
+        <h2>Collect Coins to Make <span id="target-sum">?</span></h2>
+
+        <div class="coins">
+            <img src="coin1.png" class="coin" onclick="addCoin(1)" alt="₹1 Coin">
+            <img src="coin2.png" class="coin" onclick="addCoin(2)" alt="₹2 Coin">
+            <img src="coin5.png" class="coin" onclick="addCoin(5)" alt="₹5 Coin">
+            <img src="coin10.png" class="coin" onclick="addCoin(10)" alt="₹10 Coin">
+        </div>
+
+        <p class="status">Selected Sum: <span id="coin-sum">0</span></p>
+
+        <button onclick="checkCoinCaptcha()">Submit</button>
+    </div>
+
+    <!-- Message Box for Success or Failure -->
+    <div class="message-box" id="message-box">
+        <p id="message-text"></p>
+        <button id="try-again-btn" onclick="resetGame()">Try Again</button>
+        <button id="continue-btn" onclick="redirectToMainPage()" style="display: none;">Continue</button>
+    </div>
+
+    <script>
+        let coinSum = 0;
+        let targetSum = 0;
+
+        function getRandomTarget() {
+            return Math.floor(Math.random() * 41) + 10; // Random number between 10 and 50
+        }
+
+        function startGame() {
+            targetSum = getRandomTarget();
+            document.getElementById("target-sum").innerText = targetSum;
+            coinSum = 0;
+            document.getElementById("coin-sum").innerText = coinSum;
+        }
+
+        function addCoin(value) {
+            coinSum += value;
+            document.getElementById("coin-sum").innerText = coinSum;
+        }
+
+        function checkCoinCaptcha() {
+            let messageBox = document.getElementById("message-box");
+            let messageText = document.getElementById("message-text");
+            let tryAgainBtn = document.getElementById("try-again-btn");
+            let continueBtn = document.getElementById("continue-btn");
+
+            if (coinSum === targetSum) {
+                messageText.innerText = "✅ CAPTCHA Passed!";
+                tryAgainBtn.style.display = "none"; 
+                continueBtn.style.display = "inline-block";
+                showConfetti();
+            } else {
+                messageText.innerText = "❌ Try Again!";
+                tryAgainBtn.style.display = "inline-block";
+                continueBtn.style.display = "none";
+            }
+
+            messageBox.style.display = "block";
+            setTimeout(() => messageBox.classList.add("active"), 10);
+        }
+
+        function resetGame() {
+            let messageBox = document.getElementById("message-box");
+            messageBox.classList.remove("active");
+            setTimeout(() => {
+                messageBox.style.display = "none";
+                startGame();
+            }, 300);
+        }
+
+        function redirectToMainPage() {
+            window.location.href = "login.html"; // Change this to your actual main page URL
+        }
+
+        function showConfetti() {
+            for (let i = 0; i < 30; i++) {
+                let confetti = document.createElement("div");
+                confetti.classList.add("confetti");
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.backgroundColor = randomColor();
+                confetti.style.animationDuration = Math.random() * 2 + 2 + "s";
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 3000); // Remove confetti after animation
+            }
+        }
+
+        function randomColor() {
+            let colors = ["#ffcc00", "#ff6666", "#66ff66", "#6699ff", "#ff99ff"];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        startGame();
+    </script>
+
+    <!-- Added Script: Attach navigation listeners to check for user details -->
+    <script>
+        function attachNavLinkListeners() {
+            const navLinks = document.querySelectorAll("#navbar-placeholder a");
+            navLinks.forEach(link => {
+                link.addEventListener("click", function (e) {
+                    // Check if both "name" and "email" inputs have values
+                    // (If these inputs are not on the page, the check will simply pass.)
+                    const nameElem = document.getElementById("name");
+                    const emailElem = document.getElementById("email");
+                    const name = nameElem ? nameElem.value.trim() : "";
+                    const email = emailElem ? emailElem.value.trim() : "";
+                    if (!name || !email) {
+                        e.preventDefault();
+                        alert("Please fill the captcha First, or are u a bot?");
+                    }
+                });
+            });
+        }
+    </script>
+
+</body>
+</html>

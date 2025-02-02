@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      color: white;
+      background: radial-gradient(to right, #ff3cac, #784ba0, #2b86c5);
+      min-height: 100vh;
+    }
+    /* Navigation styling */
+    nav {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li {
+      margin: 0 15px;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    /* Content area styling */
+    .content {
+      padding-top: 80px; /* to avoid overlap with the fixed nav */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    .content p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+
+/* Make sure your SVG (inside a <figure>) scales to fill the container while preserving its aspect ratio */
+  #animation-container {
+  position: fixed; /* or absolute */
+  bottom: 176px; /* Adjusts position above the footer */
+  left: 50%;
+  transform: translateX(-50%) scale(2.0);
+  z-index: 1000; /* Ensures it stays on top */
+  width: 300px; /* Adjust size as needed */
+  height: auto;
+}
+
+
+
+
+  </style>
+</head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PUNEETGPT - About Us</title>
+</head>
+<body>
+  <!-- Navigation Placeholder -->
+  <div id="nav-placeholder"></div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <h1>About Us</h1>
+    <p>
+      Welcome to PUNEETGPT, where creativity meets technology! We strive to provide an interactive and user-friendly experience through innovative designs and dynamic content.
+    </p>
+    <p>
+      Our mission is to empower users with seamless navigation and a visually appealing interface. We are continuously working to enhance the overall experience on our platform.
+    </p>
+  </div>
+
+  <!-- Apple Animation Container -->
+  <div id="animation-container"></div>
+  
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <!-- Dynamically load navigation (nav.html) -->
+  <script>
+    fetch('nav.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('nav-placeholder').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading navigation:', error));
+  </script>
+
+  <!-- Dynamically load apple.html after the main content -->
+  <script>
+    fetch('apple.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('animation-container').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading apple.html:', error));
+  </script>
+
+  <!-- Dynamically load footer (footer.html) -->
+  <script>
+    fetch('footer.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('footer-placeholder').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading footer:', error));
+  </script>
+</body>
+</html>
+

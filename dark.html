@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Mode Spotlight</title>
+  <style>
+    /* Base Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      transition: background 0.5s ease-in-out;
+      background: white;
+      overflow: hidden;
+    }
+    
+    .content {
+      padding: 50px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    
+    h1 {
+      font-size: 48px;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    
+    p {
+      font-size: 20px;
+      color: #555;
+      max-width: 800px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+    
+    /* Neon Accent */
+    .neon-text {
+      font-size: 36px;
+      color: #0f0;
+      text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 20px #0f0, 0 0 40px #0f0;
+      margin-top: 50px;
+    }
+    
+    /* Glitch Effect on Header */
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #0f0;
+      background: transparent;
+      overflow: hidden;
+      clip: rect(0, 900px, 0, 0);
+    }
+    .glitch::before {
+      animation: glitchTop 2s infinite linear;
+    }
+    .glitch::after {
+      animation: glitchBottom 2s infinite linear;
+    }
+    @keyframes glitchTop {
+      0% { clip: rect(0, 900px, 0, 0); }
+      20% { clip: rect(10px, 900px, 30px, 0); transform: translate(-2px, -2px); }
+      40% { clip: rect(0, 900px, 0, 0); transform: translate(2px, 2px); }
+      60% { clip: rect(5px, 900px, 25px, 0); transform: translate(-2px, 0); }
+      80% { clip: rect(0, 900px, 0, 0); transform: translate(2px, -2px); }
+      100% { clip: rect(10px, 900px, 30px, 0); transform: translate(-2px, 2px); }
+    }
+    @keyframes glitchBottom {
+      0% { clip: rect(0, 900px, 0, 0); }
+      20% { clip: rect(40px, 900px, 60px, 0); transform: translate(2px, 2px); }
+      40% { clip: rect(0, 900px, 0, 0); transform: translate(-2px, -2px); }
+      60% { clip: rect(45px, 900px, 70px, 0); transform: translate(2px, 0); }
+      80% { clip: rect(0, 900px, 0, 0); transform: translate(-2px, 2px); }
+      100% { clip: rect(40px, 900px, 60px, 0); transform: translate(2px, -2px); }
+    }
+    
+    /* Dark Overlay & Spotlight (kept as in your original) */
+    .dark-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 86400s ease-in-out;
+      z-index: 2;
+    }
+    .spotlight {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      z-index: 3;
+      background: black;
+      -webkit-mask-image: radial-gradient(circle 150px at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 70%);
+      mask-image: radial-gradient(circle 150px at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 70%);
+    }
+    
+    /* Toggle Button Styles */
+    .toggle-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 4;
+      text-align: center;
+    }
+    .mode-text {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      transition: color 0.4s;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      background: #ddd;
+      width: 60px;
+      height: 30px;
+      border-radius: 30px;
+      position: relative;
+      transition: background 0.4s;
+    }
+    .toggle-label input {
+      display: none;
+    }
+    .toggle-ball {
+      width: 25px;
+      height: 25px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      left: 3px;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: left 0.4s ease-in-out, background 0.4s;
+    }
+    .toggle-label input:checked + .toggle-ball {
+      left: 32px;
+      background: black;
+    }
+    
+    /* Animated Background Element */
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.1), rgba(0,0,0,0.8));
+      z-index: 0;
+      animation: pulse 5s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <div id="footer-placeholder"></div>
+    
+    <script>
+      // Dynamically load footer.html into the footer-placeholder div
+      fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-placeholder').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading footer:', error));
+    </script>
+  <!-- Animated Background -->
+  <div class="background-animation"></div>
+
+  <!-- Dark Mode Toggle -->
+  <div class="toggle-container">
+    <div class="mode-text" id="modeText">Light Mode</div>
+    <label class="toggle-label">
+      <input type="checkbox" id="toggleDarkMode">
+      <div class="toggle-ball"></div>
+    </label>
+  </div>
+
+  <!-- Page Content -->
+  <div class="content">
+    <h1 class="glitch" data-text="Dark Web">Dark Web</h1>
+    <p>Welcome to the Dark Web portal. Navigate through the shadows and discover the secrets hidden in the dark.</p>
+    <p>Move your mouse to reveal the spotlight effect over the content. The darkness comes alive with your every move.</p>
+    <div class="neon-text">Embrace the Dark</div>
+  </div>
+
+  <!-- Dark Overlay & Spotlight (for dark mode) -->
+  <div class="dark-overlay" id="darkOverlay"></div>
+  <div class="spotlight" id="spotlight"></div>
+
+  <script>
+    const toggle = document.getElementById("toggleDarkMode");
+    const overlay = document.getElementById("darkOverlay");
+    const spotlight = document.getElementById("spotlight");
+    const modeText = document.getElementById("modeText");
+
+    let spotlightX = window.innerWidth / 2;
+    let spotlightY = window.innerHeight / 2;
+    let spotlightActive = false;
+
+    toggle.addEventListener("change", function() {
+      if (this.checked) {
+        overlay.style.opacity = "1";
+        spotlight.style.opacity = "1";
+        modeText.textContent = "Dark Mode";
+        modeText.style.color = "white";
+        
+        // Enable spotlight effect
+        spotlightActive = true;
+        document.addEventListener("mousemove", updateSpotlight);
+        requestAnimationFrame(updateMask);
+      } else {
+        overlay.style.opacity = "0";
+        spotlight.style.opacity = "0";
+        modeText.textContent = "Light Mode";
+        modeText.style.color = "black";
+        
+        // Disable spotlight effect
+        spotlightActive = false;
+        document.removeEventListener("mousemove", updateSpotlight);
+      }
+    });
+
+    function updateSpotlight(e) {
+      spotlightX = e.clientX;
+      spotlightY = e.clientY;
+    }
+
+    function updateMask() {
+      if (spotlightActive) {
+        spotlight.style.webkitMaskImage = `radial-gradient(circle 150px at ${spotlightX}px ${spotlightY}px, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 70%)`;
+        spotlight.style.maskImage = `radial-gradient(circle 150px at ${spotlightX}px ${spotlightY}px, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 70%)`;
+        requestAnimationFrame(updateMask);
+      }
+    }
+
+    // Auto-toggle to dark mode on page load after a short delay
+    window.addEventListener("load", function() {
+      setTimeout(() => {
+        toggle.checked = true;
+        // Dispatch the change event to trigger the toggle logic
+        toggle.dispatchEvent(new Event("change"));
+      }, 450);
+    });
+  </script>
+</body>
+</html>
