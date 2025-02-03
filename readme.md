@@ -78,7 +78,7 @@ Navigation and footer components are loaded asynchronously from nav.html and foo
 graphql
 Copy
 Edit
-PUNEETGPT/
+PUNEETGPT
 ├── main.html        # Core futuristic HTML with AI integration 🚀
 ├── dark.css         # Futuristic dark-themed styling ✨
 ├── nav.html         # Dynamically loaded navigation bar 🛰️
